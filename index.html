@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>たまご育成ゲーム</title>
+
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: #fffaf5;
+      padding: 30px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    #character {
+      font-size: 100px;
+      margin: 30px 0 10px;
+    }
+
+    #message {
+      font-size: 20px;
+      min-height: 30px;
+      margin-bottom: 20px;
+    }
+
+    #count {
+      margin-bottom: 30px;
+    }
+
+    .section {
+      margin: 25px auto;
+      max-width: 600px;
+    }
+
+    .section h2 {
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 8px;
+    }
+
+    button {
+      font-size: 16px;
+      padding: 10px 16px;
+      margin: 5px;
+      border: none;
+      border-radius: 10px;
+      background: white;
+      box-shadow: 0 2px 6px #ccc;
+      cursor: pointer;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    #result {
+      font-size: 26px;
+      font-weight: bold;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>🥚 たまご育成ゲーム</h1>
+
+  <div id="character">🥚</div>
+
+  <div id="message">
+    今日は何をする？
+  </div>
+
+  <div id="count">
+    お世話回数：0 / 10
+  </div>
+
+
+  <!-- 行動 -->
+  <div class="section">
+
+    <h2>🏃 行動</h2>
+
+    <button onclick="action(['orange', 'green'], '料理した！🍳')">
+      料理する
+    </button>
+
+    <button onclick="action(['red'], 'ボクシングした！🥊')">
+      ボクシングする
+    </button>
+
+    <button onclick="action(['purple'], '釣りした！🎣')">
+      釣りする
+    </button>
+
+    <button onclick="action(['orange', 'yellow'], 'トークを回した！🎤')">
+      トークを回す
+    </button>
+
+    <button onclick="action(['yellow'], 'クイズの勉強をした！📚')">
+      クイズの勉強
+    </button>
+
+  </div>
+
+
+  <!-- 音楽 -->
+  <div class="section">
+
+    <h2>🎵 音楽</h2>
+
+    <button onclick="action(['orange', 'purple', 'green'], '歌った！🎤')">
+      歌う
+    </button>
+
+    <button onclick="action(['yellow', 'blue'], 'サックスを吹いた！🎷')">
+      サックスを吹く
+    </button>
+
+    <button onclick="action(['green', 'purple'], 'ギターを弾いた！🎸')">
+      ギターを弾く
+    </button>
+
+    <button onclick="action(['red'], 'ピアノを弾いた！🎹')">
+      ピアノを弾く
+    </button>
+
+    <button onclick="action(['blue'], 'パチカを演奏した！🪘')">
+      パチカを演奏
+    </button>
+
+    <button onclick="action(['pink'], 'シェイカーを振った！🪇')">
+      シェイカーを振る
+    </button>
+
+  </div>
+
+
+  <!-- ごはん -->
+  <div class="section">
+
+    <h2>🍚 ごはん</h2>
+
+    <button onclick="action(['orange'], 'おにぎりをあげた！🍙')">
+      おにぎり
+    </button>
+
+    <button onclick="action(['orange'], '麺類をあげた！🍜')">
+      うどん・ラーメン
+    </button>
+
+    <button onclick="action(['yellow'], '辛いものをあげた！🌶️')">
+      辛いもの
+    </button>
+
+  </div>
+
+
+  <div id="result"></div>
+
+
+  <script>
+
+    // 7色の隠しポイント
+    const points = {
+      red: 0,
+      orange: 0,
+      yellow: 0,
+      green: 0,
+      blue: 0,
+      purple: 0,
+      pink: 0
+    };
+
+    // 色と絵文字の対応
+    const characters = {
+      red: "❤️",
+      orange: "🧡",
+      yellow: "💛",
+      green: "💚",
+      blue: "💙",
+      purple: "💜",
+      pink: "🩷"
+    };
+
+    let actionCount = 0;
+    let finished = false;
+
+
+    // 行動したとき
+    function action(colors, text) {
+
+      if (finished) {
+        return;
+      }
+
+      // 対応する色に1ポイントずつ追加
+      colors.forEach(color => {
+        points[color]++;
+      });
+
+      actionCount++;
+
+      document.getElementById("message").textContent = text;
+
+      document.getElementById("count").textContent =
+        `お世話回数：${actionCount} / 10`;
+
+
+      // 10回お世話したら孵化！
+      if (actionCount >= 10) {
+        hatch();
+      }
+    }
+
+
+    // 孵化
+    function hatch() {
+
+      finished = true;
+
+      const maxPoint =
+        Math.max(...Object.values(points));
+
+      // 一番ポイントが高い色を全部取得
+      const winners =
+        Object.keys(points).filter(
+          color => points[color] === maxPoint
+        );
+
+      // 同点ならランダムで決定
+      const winner =
+        winners[
+          Math.floor(Math.random() * winners.length)
+        ];
+
+      document.getElementById("character").textContent =
+        characters[winner];
+
+      document.getElementById("message").textContent =
+        "パキッ……！";
+
+      document.getElementById("result").textContent =
+        `${characters[winner]} に育ちました！！`;
+    }
+
+  </script>
+
+</body>
+</html>
